@@ -1,4 +1,5 @@
 const express = require('express');
+const { check, oneOf, validationResult } = require('express-validator');
 const app = express();
 const port = 9090;
 const articles = require('./src/controllers/articles');
@@ -14,29 +15,32 @@ app.get('/', (req, res) => {
 	res.send('<p>Homepage</p>');
 });
 
-app.post('/article', async (req, res) => {
-	// console.log('BODY ARTICLE', req.body);
-	const { title, content, category } = req.body;
-	let message = '';
-	if (title.length < 20) {
-		message = 'Title must be at least 20 chars';
-	}
-	if (content.length < 200) {
-		message = 'Content must be at least 200 chars';
-	}
-	if (category.length < 3) {
-		message = 'Category must be at least 3 chars';
-	}
-	if (message == '') {
+app.post('/article', [
+	check('title')
+		.isLength({ min: 20 })
+		.withMessage('Title must be at least 20 chars long'),
+	check('content')
+		.isLength({ min: 200 })
+		.withMessage('Content must be at least 200 chars long'),
+	check('category')
+		.isLength({ min: 3 })
+		.withMessage('Category must be at least 3 chars long'),
+	check('status')
+		.isIn(['publish', 'draft', 'trash'])
+		.withMessage(
+			'Status can only contain following status: publish, draft, trash'
+		),
+	async (req, res, next) => {
 		try {
+			validationResult(req).throw();
+			// yay! we're good to start selling our skilled services :)))
 			res.json(await articles.createArticle(req.body));
 		} catch (err) {
-			console.log(err);
+			// Oh noes. This user doesn't have enough skills for this...
+			res.status(400).json(err);
 		}
-	} else {
-		res.json(message);
-	}
-});
+	},
+]);
 app.get('/article/:limit/:offset', async (req, res) => {
 	const { limit, offset } = req.params;
 	try {
@@ -53,29 +57,33 @@ app.get('/article/:id', async (req, res) => {
 		console.log(err);
 	}
 });
-app.patch('/article/:id', async (req, res) => {
-	const id = req.params.id;
-	const { title, content, category } = req.body;
-	let message = '';
-	if (title.length < 20) {
-		message = 'Title must be at least 20 chars';
-	}
-	if (content.length < 200) {
-		message = 'Content must be at least 200 chars';
-	}
-	if (category.length < 3) {
-		message = 'Category must be at least 3 chars';
-	}
-	if (message == '') {
+app.patch('/article/:id', [
+	check('title')
+		.isLength({ min: 20 })
+		.withMessage('Title must be at least 20 chars long'),
+	check('content')
+		.isLength({ min: 200 })
+		.withMessage('Content must be at least 200 chars long'),
+	check('category')
+		.isLength({ min: 3 })
+		.withMessage('Category must be at least 3 chars long'),
+	check('status')
+		.isIn(['publish', 'draft', 'trash'])
+		.withMessage(
+			'Status can only contain following status: publish, draft, trash'
+		),
+	async (req, res, next) => {
+		const id = req.params.id;
 		try {
+			validationResult(req).throw();
+			// yay! we're good to start selling our skilled services :)))
 			res.json(await articles.updateArticle(id, req.body));
 		} catch (err) {
-			console.log(err);
+			// Oh noes. This user doesn't have enough skills for this...
+			res.status(400).json(err);
 		}
-	} else {
-		res.json(message);
-	}
-});
+	},
+]);
 app.delete('/article/:id', async (req, res) => {
 	const id = req.params.id;
 	try {
