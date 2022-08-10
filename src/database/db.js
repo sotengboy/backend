@@ -11,6 +11,7 @@ const query = async (sql, params) => {
 	const [results] = await conn.execute(sql, params);
 	return results;
 };
+
 module.exports = {
 	query,
 };

@@ -25,20 +25,36 @@ app.post('/article', async (req, res) => {
 app.get('/article/:limit/:offset', async (req, res) => {
 	const { limit, offset } = req.params;
 	try {
-		res.json(await articles.getArticles(limit, offset));
+		res.json(await articles.listArticles(limit, offset));
 	} catch (err) {
 		console.log(err);
 	}
 });
-app.get('/article/:id', (req, res) => {
-	res.send('<p>Article Detail</p>');
+app.get('/article/:id', async (req, res) => {
+	const id = req.params.id;
+	try {
+		res.json(await articles.getArticle(id));
+	} catch (err) {
+		console.log(err);
+	}
 });
-app.patch('/article/:id', (req, res) => {
-	res.send('<p>Article Simpan</p>');
+app.patch('/article/:id', async (req, res) => {
+	const id = req.params.id;
+	try {
+		res.json(await articles.updateArticle(id, req.body));
+	} catch (err) {
+		console.log(err);
+	}
 });
-app.delete('/article/:id', (req, res) => {
-	res.send('<p>Article</p>');
+app.delete('/article/:id', async (req, res) => {
+	const id = req.params.id;
+	try {
+		res.json(await articles.deleteArticle(id, req.body));
+	} catch (err) {
+		console.log(err);
+	}
 });
+
 app.listen(port, () => {
 	console.log(`Server running on port ${port}`);
 });
