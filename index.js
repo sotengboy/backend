@@ -15,11 +15,26 @@ app.get('/', (req, res) => {
 });
 
 app.post('/article', async (req, res) => {
-	console.log('BODY ARTICLE', req.body);
-	try {
-		res.json(await articles.createArticle(req.body));
-	} catch (err) {
-		console.log(err);
+	// console.log('BODY ARTICLE', req.body);
+	const { title, content, category } = req.body;
+	let message = '';
+	if (title.length < 20) {
+		message = 'Title must be at least 20 chars';
+	}
+	if (content.length < 200) {
+		message = 'Content must be at least 200 chars';
+	}
+	if (category.length < 3) {
+		message = 'Category must be at least 3 chars';
+	}
+	if (message == '') {
+		try {
+			res.json(await articles.createArticle(req.body));
+		} catch (err) {
+			console.log(err);
+		}
+	} else {
+		res.json(message);
 	}
 });
 app.get('/article/:limit/:offset', async (req, res) => {
@@ -40,10 +55,25 @@ app.get('/article/:id', async (req, res) => {
 });
 app.patch('/article/:id', async (req, res) => {
 	const id = req.params.id;
-	try {
-		res.json(await articles.updateArticle(id, req.body));
-	} catch (err) {
-		console.log(err);
+	const { title, content, category } = req.body;
+	let message = '';
+	if (title.length < 20) {
+		message = 'Title must be at least 20 chars';
+	}
+	if (content.length < 200) {
+		message = 'Content must be at least 200 chars';
+	}
+	if (category.length < 3) {
+		message = 'Category must be at least 3 chars';
+	}
+	if (message == '') {
+		try {
+			res.json(await articles.updateArticle(id, req.body));
+		} catch (err) {
+			console.log(err);
+		}
+	} else {
+		res.json(message);
 	}
 });
 app.delete('/article/:id', async (req, res) => {
