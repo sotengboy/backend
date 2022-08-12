@@ -1,9 +1,21 @@
-const express = require('express');
-const { check, oneOf, validationResult } = require('express-validator');
+import express from 'express';
+import cors from 'cors';
+import { check, oneOf, validationResult } from 'express-validator';
+import {
+	createArticle,
+	deleteArticle,
+	updateArticle,
+	listArticles,
+	getArticle,
+} from './src/controllers/articles.js';
+
 const app = express();
 const port = 9090;
-const articles = require('./src/controllers/articles');
 
+const corsOptions = {
+	origin: 'http://localhost:3000',
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(
 	express.urlencoded({
@@ -34,7 +46,7 @@ app.post('/article', [
 		try {
 			validationResult(req).throw();
 			// yay! we're good to start selling our skilled services :)))
-			res.json(await articles.createArticle(req.body));
+			res.json(await createArticle(req.body));
 		} catch (err) {
 			// Oh noes. This user doesn't have enough skills for this...
 			res.status(400).json(err);
@@ -42,9 +54,10 @@ app.post('/article', [
 	},
 ]);
 app.get('/article/:limit/:offset', async (req, res) => {
+	console.log('ARTICLE ACCESSED');
 	const { limit, offset } = req.params;
 	try {
-		res.json(await articles.listArticles(limit, offset));
+		res.json(await listArticles(limit, offset));
 	} catch (err) {
 		console.log(err);
 	}
@@ -52,7 +65,7 @@ app.get('/article/:limit/:offset', async (req, res) => {
 app.get('/article/:id', async (req, res) => {
 	const id = req.params.id;
 	try {
-		res.json(await articles.getArticle(id));
+		res.json(await getArticle(id));
 	} catch (err) {
 		console.log(err);
 	}
@@ -77,7 +90,7 @@ app.patch('/article/:id', [
 		try {
 			validationResult(req).throw();
 			// yay! we're good to start selling our skilled services :)))
-			res.json(await articles.updateArticle(id, req.body));
+			res.json(await updateArticle(id, req.body));
 		} catch (err) {
 			// Oh noes. This user doesn't have enough skills for this...
 			res.status(400).json(err);
@@ -87,7 +100,7 @@ app.patch('/article/:id', [
 app.delete('/article/:id', async (req, res) => {
 	const id = req.params.id;
 	try {
-		res.json(await articles.deleteArticle(id, req.body));
+		res.json(await deleteArticle(id, req.body));
 	} catch (err) {
 		console.log(err);
 	}

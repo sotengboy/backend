@@ -5,4 +5,4 @@ const config = {
 	database: 'test_article',
 	listPerPage: 15,
 };
-module.exports = config;
+export default config;
