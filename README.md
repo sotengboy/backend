@@ -11,4 +11,9 @@
 
 ### API
 
-Endpoint api sesuai di words
+Server API `http:localhost:9090`
+Endpoint:
+`POST /article` untuk membuat article
+`GET /article/:limit/:offset` untuk mengambil data semua article berdasarkan limit
+`PATCH /article/:id` untuk mengupdate article
+`DELETE /article/:id` untuk menghapus article
